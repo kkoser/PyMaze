@@ -1,6 +1,8 @@
 from twisted.internet.protocol import Factory, ClientFactory, Protocol
 from twisted.internet import reactor
 import pickle
+from twisted.internet.task import LoopingCall
+from game import GameSpace
 
 class ServerConnection(Protocol):
 	def __init__(self, dataDict):
@@ -35,9 +37,18 @@ class ServerConnectionFactory(ClientFactory):
 		print 'Connection failed. Reason:', reason
 
 if __name__ == '__main__':
-	host = "localhost"
-	port = 2580
+
 	sharedData = dict()
 	sharedData.update({"currentServerFactory" : ServerConnectionFactory(sharedData)})
+
+	# set up pygame loop
+	gs = GameSpace()
+	gs.main()
+	lc = LoopingCall(gs.tick)
+	lc.start(1.0/30.0)
+
+
+	host = "localhost"
+	port = 2580
 	reactor.connectTCP(host, port, sharedData['currentServerFactory'])
 	reactor.run()
