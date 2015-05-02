@@ -3,6 +3,7 @@ import os
 from math import *
 import pygame
 from pygame.locals import *
+from MainMenuScreen import MainMenuScreen
 
 class GameSpace:
 	def main(self):
@@ -14,6 +15,9 @@ class GameSpace:
 		self.black = 0, 0, 0
 
 		self.screen = pygame.display.set_mode(self.size)
+                self.mainMenu = MainMenuScreen(self)
+                #self.gameScreen = GameScreen(self)
+                self.activeScreen = self.mainMenu
 	
 		# 2) set up game objects
 		self.clock = pygame.time.Clock()
@@ -25,22 +29,17 @@ class GameSpace:
 
 			# 5) handle user input events
 			for event in pygame.event.get():
-				if event.type == pygame.KEYDOWN:
-					#self.player.moveForKey(event.key)
-					#self.ball.move(event.key)
                                 if event.type == pygame.QUIT:
                                     sys.exit()
-				if event.type == pygame.MOUSEBUTTONDOWN:
-					#self.projectile = self.player.fire(self.enemy)
+                                self.activeScreen.handleEvent(event)
 
 
 			# 6) ongoing behavior
+                        self.activeScreen.tick()
 
-			# 7) animation
+			# 7) drawing
 			self.screen.fill(self.black)
-			#if self.enemy:
-			#	self.screen.blit(self.enemy.image, self.enemy.rect)
-				
+                        self.activeScreen.draw(self.screen)
                         pygame.display.flip()
 
 

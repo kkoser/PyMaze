@@ -13,5 +13,5 @@ class KLabel():
                 self.color = (255,255,255)
 
         def draw(self, screen):
-            drawText = self.font.render(self.text, self.color)
+            drawText = self.font.render(self.text, 1,self.color)
             screen.blit(drawText, (self.x,self.y))
