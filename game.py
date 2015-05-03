@@ -7,6 +7,7 @@ from MainMenuScreen import MainMenuScreen
 
 class GameSpace:
 	playerNumber = -1
+	connection = None
 	
 	def main(self):
 		# 1) basic init

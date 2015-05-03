@@ -37,30 +37,22 @@ class GameConnection(Protocol):
 		response = dict()
 		if request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST':
 			response = self.getCurrentState()
-		elif request['REQUEST_TYPE'] == 'PLAYER_CHOICE_REQUEST' and self.sharedData['currentGameScreen'] == 'MENU_SCREEN':
-			response = self.processPlayerChoice(request)
-		self.sendData(response)
+			self.sendData(response)
+		elif request['REQUEST_TYPE'] == 'MENU_STATE_UPDATE_REQUEST':
+			response = self.processPlayerChoice(request['REQUEST_DATA'])
+				#send it to both players if they're online
+			if self.sharedData['currentGameFactory'].player1Connection is not None:
+				response['PLAYER_NUMBER'] = 1
+				self.sharedData['currentGameFactory'].player1Connection.sendData(response)
+			if self.sharedData['currentGameFactory'].player2Connection is not None:
+				response['PLAYER_NUMBER'] = 2
+				self.sharedData['currentGameFactory'].player2Connection.sendData(response)
 
-	def processPlayerChoice(self, request):
-		response = dict()
-		playerChoice = request['PLAYER_CHOICE']
-		if (playerChoice == 'KATARA' and self.sharedData['currentMenuState'].kataraPlayer != 0) or (playerChoice == 'AANG' and self.sharedData['currentMenuState'].aangPlayer != 0):
-			response['RESPONSE'] = 'ERROR'
-			response['REASON'] = 'Player already taken'
-		elif playerChoice == 'KATARA':
-			self.sharedData['currentMenuState'].kataraPlayer = self.playerNumber
-			response['RESPONSE'] = 'SUCCESS'
-			response['REASON'] = 'You are Katara'
-		elif playerChoice == 'AANG':
-			self.sharedData['currentMenuState'].aangPlayer = self.playerNumber
-			response['RESPONSE'] = 'SUCCESS'
-			response['REASON'] = 'You are Aang'
-		else:
-			response['RESPONSE'] = 'ERROR'
-			response['REASON'] = 'Player not found'
 
-		response['MENU_STATE'] = self.sharedData['currentMenuState']
-		return response
+	def processPlayerChoice(self, menuState):
+		# maybe in the future prevent clobbering
+		self.sharedData['currentMenuState'] = menuState
+		return self.getCurrentState()
 
 
 class GameConnectionFactory(Factory):

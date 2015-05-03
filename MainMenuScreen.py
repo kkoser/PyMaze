@@ -41,11 +41,13 @@ class MainMenuScreen:
                 print "Selected aang"
                 if self.state.aangPlayer == 0 and self.state.kataraPlayer != self.gs.playerNumber:
                     self.state.aangPlayer = self.gs.playerNumber
+                    self.gs.connection.sendMenuState(self.state)
             if self.katara.rect.collidepoint(mx,my):
                 #select katara
                 print "Selected katara"
                 if self.state.kataraPlayer == 0 and self.state.aangPlayer != self.gs.playerNumber:
                     self.state.kataraPlayer = self.gs.playerNumber
+                    self.gs.connection.sendMenuState(self.state)
 
     def tick(self):
         if self.state == None:
@@ -56,14 +58,14 @@ class MainMenuScreen:
         if pid == self.state.aangPlayer:
             self.aangLabel.text = "You"
         elif self.state.aangPlayer == 0:
-            self.aangLabel.text = "You"
+            self.aangLabel.text = "Aang"
         else:
             self.aangLabel.text = "Them"
 
         if pid == self.state.kataraPlayer:
             self.kataraLabel.text = "You"
         elif self.state.kataraPlayer == 0:
-            self.kataraLabel.text = "You"
+            self.kataraLabel.text = "Katara"
         else:
             self.kataraLabel.text = "Them"
 

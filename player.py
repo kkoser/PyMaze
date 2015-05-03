@@ -13,6 +13,9 @@ class ServerConnection(Protocol):
 		self.processResponse(decodedData)
 
 	def connectionMade(self):
+		# save connection for callback
+		self.sharedData['gameSpace'].connection = self
+		# initial request
 		self.askForGameState()
 
 	def sendData(self, data):
@@ -26,8 +29,14 @@ class ServerConnection(Protocol):
 	def processResponse(self, response):
 		if response['RESPONSE_TYPE'] == 'GAME_STATE_RESPONSE':
 			# update game state
+			print vars(response['RESPONSE_DATA'])
 			self.sharedData['gameSpace'].activeScreen.state = response['RESPONSE_DATA']
+			print response['PLAYER_NUMBER']
 			self.sharedData['gameSpace'].playerNumber = response['PLAYER_NUMBER']
+
+	def sendMenuState(self, menuState):
+		request = {'REQUEST_TYPE' : 'MENU_STATE_UPDATE_REQUEST', 'REQUEST_DATA' : menuState}
+		self.sendData(request)
 
 class ServerConnectionFactory(ClientFactory):
 	currentConnection = None
