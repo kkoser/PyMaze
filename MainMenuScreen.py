@@ -39,20 +39,20 @@ class MainMenuScreen:
             if self.aang.rect.collidepoint(mx,my):
                 #select aang
                 print "Selected aang"
-                if self.state.aangPlayer == 0 and self.state.kataraPlayer != self.state.playerNum:
-                    self.state.aangPlayer = self.state.playerNumer
+                if self.state.aangPlayer == 0 and self.state.kataraPlayer != self.gs.playerNumber:
+                    self.state.aangPlayer = self.gs.playerNumber
             if self.katara.rect.collidepoint(mx,my):
                 #select katara
                 print "Selected katara"
-                if self.state.kataraPlayer == 0 and self.state.aangPlayer != self.state.playerNum:
-                    self.state.kataraPlayer = self.state.playerNum
+                if self.state.kataraPlayer == 0 and self.state.aangPlayer != self.gs.playerNumber:
+                    self.state.kataraPlayer = self.gs.playerNumber
 
     def tick(self):
         if self.state == None:
             return
 
         # The state object will be updated by the twisted client as appropriate
-        pid = self.state.playerNumber
+        pid = self.gs.playerNumber
         if pid == self.state.aangPlayer:
             self.aangLabel.text = "You"
         elif self.state.aangPlayer == 0:
