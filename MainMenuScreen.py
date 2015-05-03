@@ -34,7 +34,6 @@ class MainMenuScreen:
         self.kataraLabel.draw(screen)
 
     def handleEvent(self, event):
-        print event
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
             if self.aang.rect.collidepoint(mx,my):
@@ -70,7 +69,7 @@ class MainMenuScreen:
 
         if self.state.aangPlayer > 0 and self.state.kataraPlayer > 0:
             self.statusLabel.text = "Ready to Play!"
-        elif self.state.aangPlayer == self.state.playerNum or self.state.kataraPlayer == self.state.playerNum:
+        elif self.state.aangPlayer == self.state.playerNum or self.state.kataraPlayer == pid:
             self.statusLabel.text = "Waiting for partner"
         else:
             self.statusLabel.text = "Choose a character"
