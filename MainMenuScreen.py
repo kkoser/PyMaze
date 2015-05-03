@@ -69,7 +69,7 @@ class MainMenuScreen:
 
         if self.state.aangPlayer > 0 and self.state.kataraPlayer > 0:
             self.statusLabel.text = "Ready to Play!"
-        elif self.state.aangPlayer == self.state.playerNum or self.state.kataraPlayer == pid:
+        elif self.state.aangPlayer == pid or self.state.kataraPlayer == pid:
             self.statusLabel.text = "Waiting for partner"
         else:
             self.statusLabel.text = "Choose a character"
