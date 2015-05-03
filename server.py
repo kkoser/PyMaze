@@ -15,7 +15,7 @@ class GameConnection(Protocol):
 		self.sharedData = dataDict
 
 	def getCurrentState(self):
-		data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'CURRENT_SCREEN' : self.sharedData['currentGameScreen']}
+		data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'CURRENT_SCREEN' : self.sharedData['currentGameScreen'], 'PLAYER_NUMBER' : self.playerNumber}
 		if self.sharedData['currentGameScreen'] == 'MENU_SCREEN':
 			data['RESPONSE_DATA'] = self.sharedData['currentMenuState']
 		else:

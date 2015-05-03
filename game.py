@@ -6,6 +6,7 @@ from pygame.locals import *
 from MainMenuScreen import MainMenuScreen
 
 class GameSpace:
+	playerNumber = -1
 	
 	def main(self):
 		# 1) basic init

@@ -1,5 +1,4 @@
 class MenuState(object):
-	playerNumber = 0
 	aangPlayer = 0
 	kataraPlayer = 0
 

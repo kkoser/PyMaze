@@ -27,6 +27,7 @@ class ServerConnection(Protocol):
 		if response['RESPONSE_TYPE'] == 'GAME_STATE_RESPONSE':
 			# update game state
 			self.sharedData['gameSpace'].activeScreen.state = response['RESPONSE_DATA']
+			self.sharedData['gameSpace'].playerNumber = response['PLAYER_NUMBER']
 
 class ServerConnectionFactory(ClientFactory):
 	currentConnection = None
