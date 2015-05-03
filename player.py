@@ -27,7 +27,7 @@ class ServerConnection(Protocol):
 		self.sendData(request)
 
 	def processResponse(self, response):
-		if response['RESPONSE_TYPE'] == 'GAME_STATE_RESPONSE':
+		if response['RESPONSE_TYPE'] == 'GAME_STATE_RESPONSE' or response['RESPONSE_TYPE'] == 'MENU_STATE_RESPONSE':
 			# update game state
 			print vars(response['RESPONSE_DATA'])
 			self.sharedData['gameSpace'].activeScreen.state = response['RESPONSE_DATA']
