@@ -49,6 +49,9 @@ class MainMenuScreen:
                     self.state.kataraPlayer = self.state.playerNum
 
     def tick(self):
+        if self.state == None:
+            return
+
         # The state object will be updated by the twisted client as appropriate
         pid = self.state.playerNumber
         if pid == self.state.aangPlayer:
