@@ -5,7 +5,7 @@ import pickle
 from MenuState import MenuState
 
 # possible screens: MENU_SCREEN, GAME_SCREEN
-# possible requests: GAME_STATE_REQUEST, PLAYER_CHOICE_REQUEST, GAME_STATE_UPDATE_REQUEST
+# possible requests: GAME_STATE_REQUEST, PLAYER_CHOICE_REQUEST, GAME_STATE_UPDATE_REQUEST, MENU_STATE_UPDATE_REQUEST
 
 # this represents a connection between a client and the server
 # two of these should exist
@@ -13,14 +13,6 @@ class GameConnection(Protocol):
 	playerNumber = 0
 	def __init__(self, dataDict):
 		self.sharedData = dataDict
-
-	def getCurrentState(self):
-		data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'CURRENT_SCREEN' : self.sharedData['currentGameScreen'], 'PLAYER_NUMBER' : self.playerNumber}
-		if self.sharedData['currentGameScreen'] == 'MENU_SCREEN':
-			data['RESPONSE_DATA'] = self.sharedData['currentMenuState']
-		else:
-			data['RESPONSE_DATA'] = self.sharedData['currentGameState']
-		return data
 
 	def connectionMade(self):
 		self.sendData(self.getCurrentState())
@@ -38,21 +30,23 @@ class GameConnection(Protocol):
 		if request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST':
 			response = self.getCurrentState()
 			self.sendData(response)
-		elif request['REQUEST_TYPE'] == 'MENU_STATE_UPDATE_REQUEST':
-			response = self.processPlayerChoice(request['REQUEST_DATA'])
-				#send it to both players if they're online
-			if self.sharedData['currentGameFactory'].player1Connection is not None:
-				response['PLAYER_NUMBER'] = 1
-				self.sharedData['currentGameFactory'].player1Connection.sendData(response)
-			if self.sharedData['currentGameFactory'].player2Connection is not None:
-				response['PLAYER_NUMBER'] = 2
-				self.sharedData['currentGameFactory'].player2Connection.sendData(response)
-
-
-	def processPlayerChoice(self, menuState):
-		# maybe in the future prevent clobbering
-		self.sharedData['currentMenuState'] = menuState
-		return self.getCurrentState()
+		elif request['REQUEST_TYPE'] == 'MENU_STATE_UPDATE_REQUEST' or requ:
+			self.sharedData['currentMenuState'] = menuState
+			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.getCurrentState()}
+			self.sendDataToBothPlayers(data)
+		elif request['REQUEST_TYPE'] == 'GAME_STATE_UPDATE_REQUEST':
+			self.sharedData['currentGameState'] = request['REQUEST_DATA']
+			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.getCurrentState()}
+			self.sendDataToBothPlayers(data)
+			
+	def sendDataToBothPlayers(self, data):
+		#send it to both players if they're online
+		if self.sharedData['currentGameFactory'].player1Connection is not None:
+			response['PLAYER_NUMBER'] = 1
+			self.sharedData['currentGameFactory'].player1Connection.sendData(response)
+		if self.sharedData['currentGameFactory'].player2Connection is not None:
+			response['PLAYER_NUMBER'] = 2
+			self.sharedData['currentGameFactory'].player2Connection.sendData(response)
 
 
 class GameConnectionFactory(Factory):
