@@ -48,6 +48,13 @@ class MainMenuScreen:
                 if self.state.kataraPlayer == 0 and self.state.aangPlayer != self.gs.playerNumber:
                     self.state.kataraPlayer = self.gs.playerNumber
                     self.gs.connection.sendMenuState(self.state)
+            if self.statusLabel.rect.collidepoint(mx,my) and self.statusLabel.text == "Enter the Cave":
+                if self.state.aangPlayer == self.gs.playerNumber:
+                    self.state.aangReady = True
+                else:
+                    self.state.kataraReady = True
+
+                self.gs.connection.sendMenuState(self.state)
 
     def tick(self):
         if self.state == None:
@@ -60,17 +67,17 @@ class MainMenuScreen:
         elif self.state.aangPlayer == 0:
             self.aangLabel.text = "Aang"
         else:
-            self.aangLabel.text = "Them"
+            self.aangLabel.text = "Lover"
 
         if pid == self.state.kataraPlayer:
             self.kataraLabel.text = "You"
         elif self.state.kataraPlayer == 0:
             self.kataraLabel.text = "Katara"
         else:
-            self.kataraLabel.text = "Them"
+            self.kataraLabel.text = "Lover"
 
         if self.state.aangPlayer > 0 and self.state.kataraPlayer > 0:
-            self.statusLabel.text = "Ready to Play!"
+            self.statusLabel.text = "Enter the Cave"
         elif self.state.aangPlayer == pid or self.state.kataraPlayer == pid:
             self.statusLabel.text = "Waiting for partner"
         else:
