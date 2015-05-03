@@ -17,7 +17,7 @@ class MazeView:
             line = line.rstrip()
             components = line.split(",")
             for loc in components:
-                if loc == 0:
+                if loc == "0":
                     #load an empty space
                     view = KSprite("images/floor.png")
                 else:
@@ -38,8 +38,13 @@ class MazeView:
         maxDist = 48*3
         mx = mx * 48
         my = my * 48
+        print mx
+        print my
         for arr in self.mazeViews:
             for view in arr:
                 dist = math.sqrt((view.rect.x-mx)**2 + (view.rect.y-my)**2)
                 if dist <= maxDist:
+                    print view.rect
                     view.draw(screen)
+
+        print "---------------"

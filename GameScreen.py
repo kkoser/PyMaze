@@ -40,3 +40,10 @@ class GameScreen:
     def tick(self):
         if self.state == None:
             return
+
+        self.aang.rect.x = 48*self.state.aangPosition[0]
+        self.aang.rect.y = 48*self.state.aangPosition[1]
+        
+        self.katara.rect.x = 48*self.state.kataraPosition[0]
+        self.katara.rect.y = 48*self.state.kataraPosition[1]
+        
