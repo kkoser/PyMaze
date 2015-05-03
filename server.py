@@ -33,6 +33,8 @@ class GameConnection(Protocol):
 			self.sendDataToBothPlayers(data)
 		elif request['REQUEST_TYPE'] == 'GAME_STATE_UPDATE_REQUEST':
 			self.sharedData['currentGameState'] = request['REQUEST_DATA']
+			# change turn
+			self.sharedData['currentGameState'].playerTurnNumber = self.sharedData['currentGameState'].playerTurnNumber % 2 + 1
 			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentGameState']}
 			self.sendDataToBothPlayers(data)
 		elif request['REQUEST_TYPE'] == 'MENU_STATE_REQUEST':

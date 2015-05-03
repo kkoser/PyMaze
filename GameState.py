@@ -4,6 +4,7 @@ class GameState(object):
 	aangPlayerNumber = 0
 	kataraPlayerNumber = 0
 	gameOver = False
+	playerTurnNumber = 1
 	
 	def __init__(self):
 		pass
