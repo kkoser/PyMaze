@@ -11,7 +11,7 @@ class KLabel():
                 self.x = x
                 self.y = y
                 self.color = (255,255,255)
-		self.rect = None
+		self.rect = Rect(x,y,0,0)
 
         def draw(self, screen):
             drawText = self.font.render(self.text, 1,self.color)
