@@ -1,6 +1,6 @@
 class MenuState(object):
-	aangPlayer = 0
-	kataraPlayer = 0
+	aangPlayerNumber = 0
+	kataraPlayerNumber = 0
 	aangPlayerReady = False
 	kataraPlayerReady = False
 

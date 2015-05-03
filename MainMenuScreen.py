@@ -39,21 +39,21 @@ class MainMenuScreen:
             if self.aang.rect.collidepoint(mx,my):
                 #select aang
                 print "Selected aang"
-                if self.state.aangPlayer == 0 and self.state.kataraPlayer != self.gs.playerNumber:
-                    self.state.aangPlayer = self.gs.playerNumber
+                if self.state.aangPlayerNumber == 0 and self.state.kataraPlayerNumber != self.gs.playerNumber:
+                    self.state.aangPlayerNumber = self.gs.playerNumber
                     self.gs.connection.sendMenuState(self.state)
             if self.katara.rect.collidepoint(mx,my):
                 #select katara
                 print "Selected katara"
-                if self.state.kataraPlayer == 0 and self.state.aangPlayer != self.gs.playerNumber:
-                    self.state.kataraPlayer = self.gs.playerNumber
+                if self.state.kataraPlayerNumber == 0 and self.state.aangPlayerNumber != self.gs.playerNumber:
+                    self.state.kataraPlayerNumber = self.gs.playerNumber
                     self.gs.connection.sendMenuState(self.state)
             if self.statusLabel.rect.collidepoint(mx,my) and self.statusLabel.text == "Enter the Cave":
                 print "clicked label"
-                if self.state.aangPlayer == self.gs.playerNumber:
-                    self.state.aangReady = True
+                if self.state.aangPlayerNumber == self.gs.playerNumber:
+                    self.state.aangPlayerReady = True
                 else:
-                    self.state.kataraReady = True
+                    self.state.kataraPlayerReady = True
 
                 self.gs.connection.sendMenuState(self.state)
 
@@ -65,23 +65,23 @@ class MainMenuScreen:
 
         # The state object will be updated by the twisted client as appropriate
         pid = self.gs.playerNumber
-        if pid == self.state.aangPlayer:
+        if pid == self.state.aangPlayerNumber:
             self.aangLabel.text = "You"
-        elif self.state.aangPlayer == 0:
+        elif self.state.aangPlayerNumber == 0:
             self.aangLabel.text = "Aang"
         else:
             self.aangLabel.text = "Lover"
 
-        if pid == self.state.kataraPlayer:
+        if pid == self.state.kataraPlayerNumber:
             self.kataraLabel.text = "You"
-        elif self.state.kataraPlayer == 0:
+        elif self.state.kataraPlayerNumber == 0:
             self.kataraLabel.text = "Katara"
         else:
             self.kataraLabel.text = "Lover"
 
-        if self.state.aangPlayer > 0 and self.state.kataraPlayer > 0:
+        if self.state.aangPlayerNumber > 0 and self.state.kataraPlayerNumber > 0:
             self.statusLabel.text = "Enter the Cave"
-        elif self.state.aangPlayer == pid or self.state.kataraPlayer == pid:
+        elif self.state.aangPlayerNumber == pid or self.state.kataraPlayerNumber == pid:
             self.statusLabel.text = "Waiting for partner"
         else:
             self.statusLabel.text = "Choose a character"

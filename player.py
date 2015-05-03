@@ -34,6 +34,7 @@ class ServerConnection(Protocol):
 			#check for transition to game screen
 			print vars(response['RESPONSE_DATA'])
 			if response['RESPONSE_DATA'].aangPlayerReady and response['RESPONSE_DATA'].kataraPlayerReady:
+				print "asking for game state"
 				# get game state
 				self.askForGameState()
 
@@ -48,7 +49,7 @@ class ServerConnection(Protocol):
 		self.sendData(request)
 
 	def askForGameState(self):
-		request = {'REQUEST_TYPE' : 'MENU_STATE_REQUEST'}
+		request = {'REQUEST_TYPE' : 'GAME_STATE_REQUEST'}
 		self.sendData(request)
 
 	def askForMenuState(self):

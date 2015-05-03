@@ -1,6 +1,6 @@
 import sys
 import os
-from math import *
+import math
 import pygame
 from pygame.locals import *
 from KSprite import KSprite
