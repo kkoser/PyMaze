@@ -13,7 +13,7 @@ class ServerConnection(Protocol):
 		self.processResponse(decodedData)
 
 	def connectionMade(self):
-		seld.askForGameState()
+		self.askForGameState()
 
 	def sendData(self, data):
 		encodedData = pickle.dumps(data)
