@@ -15,7 +15,7 @@ class GameConnection(Protocol):
 		self.sharedData = dataDict
 
 	def connectionMade(self):
-		self.sendData(self.getCurrentState())
+		pass
 
 	def dataReceived(self, data):
 		decodedData = pickle.loads(data)
@@ -27,27 +27,29 @@ class GameConnection(Protocol):
 
 	def respondToRequest(self, request):
 		response = dict()
-		if request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST':
-			response = self.getCurrentState()
-			self.sendData(response)
-		elif request['REQUEST_TYPE'] == 'MENU_STATE_UPDATE_REQUEST' or requ:
-			self.sharedData['currentMenuState'] = menuState
-			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.getCurrentState()}
+		if request['REQUEST_TYPE'] == 'MENU_STATE_UPDATE_REQUEST':
+			self.sharedData['currentMenuState'] = request['REQUEST_DATA']
+			data = {'RESPONSE_TYPE' : 'MENU_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentMenuState']}
 			self.sendDataToBothPlayers(data)
 		elif request['REQUEST_TYPE'] == 'GAME_STATE_UPDATE_REQUEST':
 			self.sharedData['currentGameState'] = request['REQUEST_DATA']
-			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.getCurrentState()}
+			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentGameState']}
 			self.sendDataToBothPlayers(data)
-			
+		elif request['REQUEST_TYPE'] == 'MENU_STATE_REQUEST':
+			data = {'RESPONSE_TYPE' : 'MENU_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentMenuState']}
+			self.sendData(data)
+		elif request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST':
+			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentGameState']}
+			self.sendData(data)
+
 	def sendDataToBothPlayers(self, data):
 		#send it to both players if they're online
 		if self.sharedData['currentGameFactory'].player1Connection is not None:
-			response['PLAYER_NUMBER'] = 1
-			self.sharedData['currentGameFactory'].player1Connection.sendData(response)
+			data['PLAYER_NUMBER'] = 1
+			self.sharedData['currentGameFactory'].player1Connection.sendData(data)
 		if self.sharedData['currentGameFactory'].player2Connection is not None:
-			response['PLAYER_NUMBER'] = 2
-			self.sharedData['currentGameFactory'].player2Connection.sendData(response)
-
+			data['PLAYER_NUMBER'] = 2
+			self.sharedData['currentGameFactory'].player2Connection.sendData(data)
 
 class GameConnectionFactory(Factory):
 	player1Connection = None

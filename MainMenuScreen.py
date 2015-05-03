@@ -49,6 +49,7 @@ class MainMenuScreen:
                     self.state.kataraPlayer = self.gs.playerNumber
                     self.gs.connection.sendMenuState(self.state)
             if self.statusLabel.rect.collidepoint(mx,my) and self.statusLabel.text == "Enter the Cave":
+                print "clicked label"
                 if self.state.aangPlayer == self.gs.playerNumber:
                     self.state.aangReady = True
                 else:

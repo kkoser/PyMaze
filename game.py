@@ -18,9 +18,9 @@ class GameSpace:
 		self.black = 0, 0, 0
 
 		self.screen = pygame.display.set_mode(self.size)
-		self.mainMenu = MainMenuScreen(self)
+		self.mainMenuScreen = MainMenuScreen(self)
 		#self.gameScreen = GameScreen(self)
-		self.activeScreen = self.mainMenu
+		self.activeScreen = self.mainMenuScreen
 
 	def tick(self):
 		# 5) handle user input events
