@@ -7,7 +7,7 @@ from KSprite import KSprite
 from KLabel import KLabel
 from MazeView import MazeView
 
-class MainMenuScreen:
+class GameScreen:
     def setup(self):
         #Add in the logos and buttons here
         self.mazeView = MazeView(self)

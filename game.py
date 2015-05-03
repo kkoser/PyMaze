@@ -4,6 +4,7 @@ from math import *
 import pygame
 from pygame.locals import *
 from MainMenuScreen import MainMenuScreen
+from GameScreen import GameScreen
 
 class GameSpace:
 	playerNumber = -1
@@ -19,7 +20,7 @@ class GameSpace:
 
 		self.screen = pygame.display.set_mode(self.size)
 		self.mainMenuScreen = MainMenuScreen(self)
-		#self.gameScreen = GameScreen(self)
+		self.gameScreen = GameScreen(self)
 		self.activeScreen = self.mainMenuScreen
 
 	def tick(self):

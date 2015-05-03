@@ -10,7 +10,7 @@ class MazeView:
     def setupFromFile(self, desc):
         self.mazeViews = []
         y = 0
-         f = open(ratings_file)
+        f = open(desc)
         for line in f:
             arr = []
             x = 0
@@ -19,9 +19,9 @@ class MazeView:
             for loc in components:
                 if loc == 0:
                     #load an empty space
-                    view = KSprite("images/emptySpace.gif")
+                    view = KSprite("images/floor.png")
                 else:
-                    view = KSPrite("images/wallSpace.png")
+                    view = KSprite("images/wall.png")
                 view.rect.move_ip(48*x,48*y)
                 arr.append(view)
             self.mazeViews.append(arr)
@@ -30,7 +30,7 @@ class MazeView:
     def __init__(self, parent):
         self.mazeViews = None
         self.parent = parent
-        self.setupFromFile("maze1.txt")
+        self.setupFromFile("emptyMaze.txt")
 
     def drawAroundPoint(self, screen, (mx, my)):
         maxDist = 48*3
@@ -38,6 +38,6 @@ class MazeView:
         my = my * 48
         for arr in self.mazeViews:
             for view in arr:
-                dist = math.sqrt((view.rect.x-mx)**2 + (view.rect.y-my)**2))
+                dist = math.sqrt((view.rect.x-mx)**2 + (view.rect.y-my)**2)
                 if dist <= maxDist:
                     view.draw(screen)
