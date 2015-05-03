@@ -9,13 +9,24 @@ class ServerConnection(Protocol):
 		self.sharedData = dataDict
 
 	def dataReceived(self, data):
-		print data
+		decodedData = pickle.loads(data)
+		self.processResponse(decodedData)
+
 	def connectionMade(self):
-		request = {'REQUEST_TYPE' : 'PLAYER_CHOICE', 'PLAYER_CHOICE' : 'KATARA'}
-		encodedRequest = pickle.dumps(request)
-		self.sendData(encodedRequest)
+		seld.askForGameState()
+
 	def sendData(self, data):
-		self.transport.write(data)
+		encodedData = pickle.dumps(data)
+		self.transport.write(encodedData)
+
+	def askForGameState(self):
+		request = {'REQUEST_TYPE' : 'GAME_STATE_REQUEST'}
+		self.sendData(request)
+
+	def processResponse(self, response):
+		if response['RESPONSE_TYPE'] == 'GAME_STATE_RESPONSE':
+			# update game state
+			self.sharedData['gameSpace'].activeScreen.state = response['RESPONSE_DATA']
 
 class ServerConnectionFactory(ClientFactory):
 	currentConnection = None
@@ -39,12 +50,11 @@ class ServerConnectionFactory(ClientFactory):
 if __name__ == '__main__':
 
 	sharedData = dict()
-	sharedData.update({"currentServerFactory" : ServerConnectionFactory(sharedData)})
+	sharedData.update({"currentServerFactory" : ServerConnectionFactory(sharedData), 'gameSpace' : GameSpace()})
 
 	# set up pygame loop
-	gs = GameSpace()
-	gs.main()
-	lc = LoopingCall(gs.tick)
+	sharedData['gameSpace'].main()
+	lc = LoopingCall(sharedData['gameSpace'].tick)
 	lc.start(1.0/30.0)
 
 

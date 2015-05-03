@@ -2,6 +2,10 @@ from twisted.internet.protocol import Factory, Protocol
 from twisted.internet import reactor
 from GameState import GameState
 import pickle
+from MenuState import MenuState
+
+# possible screens: MENU_SCREEN, GAME_SCREEN
+# possible requests: GAME_STATE_REQUEST, PLAYER_CHOICE_REQUEST, GAME_STATE_UPDATE_REQUEST
 
 # this represents a connection between a client and the server
 # two of these should exist
@@ -10,44 +14,52 @@ class GameConnection(Protocol):
 	def __init__(self, dataDict):
 		self.sharedData = dataDict
 
-	def sendGameState(self):
-		data = {'GAME_STATE' : self.sharedData['currentGameState'], 'GAME_STAGE' : self.sharedData['currentGameStage']}
-		encodedData = pickle.dumps(data)
-		self.sendData(encodedData)
+	def getCurrentState(self):
+		data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'CURRENT_SCREEN' : self.sharedData['currentGameScreen']}
+		if self.sharedData['currentGameScreen'] == 'MENU_SCREEN':
+			data['RESPONSE_DATA'] = self.sharedData['currentMenuState']
+		else:
+			data['RESPONSE_DATA'] = self.sharedData['currentGameState']
+		return data
+
 	def connectionMade(self):
-		self.sendGameState()
+		self.sendData(self.getCurrentState())
 
 	def dataReceived(self, data):
 		decodedData = pickle.loads(data)
-		self.processRequest(decodedData)
+		self.respondToRequest(decodedData)
 
 	def sendData(self, data):
-		self.transport.write(data)
+		encodedData = pickle.dumps(data)
+		self.transport.write(encodedData)
 
-	def processRequest(self, request):
+	def respondToRequest(self, request):
 		response = dict()
-		if request['REQUEST_TYPE'] == 'PLAYER_CHOICE' and self.sharedData['currentGameStage']:
+		if request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST':
+			response = self.getCurrentState()
+		elif request['REQUEST_TYPE'] == 'PLAYER_CHOICE_REQUEST' and self.sharedData['currentGameScreen'] == 'MENU_SCREEN':
 			response = self.processPlayerChoice(request)
-		encodedResponse = pickle.dumps(response)
-		self.sendData(encodedResponse)
+		self.sendData(response)
 
 	def processPlayerChoice(self, request):
 		response = dict()
 		playerChoice = request['PLAYER_CHOICE']
-		if (playerChoice == 'KATARA' and self.sharedData['kataraPlayer'] != 0) or (playerChoice == 'AANG' and self.sharedData['aangPlayer'] != 0):
+		if (playerChoice == 'KATARA' and self.sharedData['currentMenuState'].kataraPlayer != 0) or (playerChoice == 'AANG' and self.sharedData['currentMenuState'].aangPlayer != 0):
 			response['RESPONSE'] = 'ERROR'
 			response['REASON'] = 'Player already taken'
 		elif playerChoice == 'KATARA':
-			self.sharedData['kataraPlayer'] = self.playerNumber
+			self.sharedData['currentMenuState'].kataraPlayer = self.playerNumber
 			response['RESPONSE'] = 'SUCCESS'
 			response['REASON'] = 'You are Katara'
 		elif playerChoice == 'AANG':
-			self.sharedData['aangPlayer']= self.playerNumber
+			self.sharedData['currentMenuState'].aangPlayer = self.playerNumber
 			response['RESPONSE'] = 'SUCCESS'
 			response['REASON'] = 'You are Aang'
 		else:
 			response['RESPONSE'] = 'ERROR'
 			response['REASON'] = 'Player not found'
+
+		response['MENU_STATE'] = self.sharedData['currentMenuState']
 		return response
 
 
@@ -110,7 +122,9 @@ class ChatConnectionFactory(Factory):
 
 
 sharedData = dict()
-sharedData.update({'currentGameState' : GameState(), 'currentGameStage' : 'PLAYER_CHOICE', 'kataraPlayer' : 0, 'aangPlayer' : 0, "currentChatFactory" : ChatConnectionFactory(sharedData), "currentGameFactory" : GameConnectionFactory(sharedData)})
+#state refers to data pertaining to the game
+#screen refers to the point of the game
+sharedData.update({'currentGameState' : GameState(), 'currentMenuState' : MenuState(), 'currentGameScreen' : 'MENU_SCREEN', "currentChatFactory" : ChatConnectionFactory(sharedData), "currentGameFactory" : GameConnectionFactory(sharedData)})
 
 # connection to work
 reactor.listenTCP(2580, sharedData["currentGameFactory"])
