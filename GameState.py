@@ -1,6 +1,6 @@
 class GameState(object):
-	aangPosition = (0,0)
-	kataraPosition = (10,10)
+	aangPosition = (1,0)
+	kataraPosition = (9,7)
 	aangPlayerNumber = 0
 	kataraPlayerNumber = 0
 	gameOver = False
