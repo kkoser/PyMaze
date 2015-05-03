@@ -60,6 +60,8 @@ class MainMenuScreen:
         if self.state == None:
             return
 
+        print "Tick"
+
         # The state object will be updated by the twisted client as appropriate
         pid = self.gs.playerNumber
         if pid == self.state.aangPlayer:
