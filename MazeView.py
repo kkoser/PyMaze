@@ -23,8 +23,10 @@ class MazeView:
                 else:
                     view = KSprite("images/wall.png")
                 view.rect.move_ip(48*x,48*y)
+                x = x + 1
                 arr.append(view)
             self.mazeViews.append(arr)
+            y = y + 1
         f.close()   
 
     def __init__(self, parent):
