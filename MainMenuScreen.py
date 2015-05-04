@@ -15,7 +15,7 @@ class MainMenuScreen:
         self.katara.rect.move_ip(400,200)
 
         self.font = pygame.font.Font(None,30)
-        self.statusLabel = KLabel("Choose a character", self.font, 500,400)
+        self.statusLabel = KLabel("Choose a character", self.font, 300,400)
         self.aangLabel = KLabel("Aang", self.font, 200,250)
         self.kataraLabel = KLabel("Katara", self.font, 400,250)
 
