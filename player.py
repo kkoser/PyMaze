@@ -50,7 +50,7 @@ class ServerConnection(Protocol):
 		request = {'REQUEST_TYPE' : 'MENU_STATE_UPDATE_REQUEST', 'REQUEST_DATA' : menuState}
 		self.sendData(request)
 
-	def sendMenuState(self, gameState):
+	def sendGameState(self, gameState):
 		request = {'REQUEST_TYPE' : 'GAME_STATE_UPDATE_REQUEST', 'REQUEST_DATA' : gameState}
 		self.sendData(request)
 
