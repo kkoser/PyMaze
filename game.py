@@ -15,7 +15,7 @@ class GameSpace:
 	def main(self):
 		pygame.init()
 
-		self.size = self.width, self.height = 480, 480
+		self.size = self.width, self.height = 480, 520
 
 		self.black = 0, 0, 0
 

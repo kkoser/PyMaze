@@ -18,6 +18,12 @@ class GameScreen:
         self.katara = KSprite("images/katara.jpg")
         self.katara.rect.move_ip(400,200)
 
+        self.font = pygame.font.Font(None,30)
+        self.turnLabel = KLabel("Your", self.font, 20,490)
+
+        self.bigFont = pygame.font.Font(None, 45)
+        self.gameOverLabel = KLabel("Your", self.bigFont, 100,100)
+
         self.state = None
 
     def __init__(self, gs):
@@ -36,6 +42,10 @@ class GameScreen:
 
         self.aang.draw(screen)
         self.katara.draw(screen)
+        self.turnLabel.draw(screen)
+
+        if self.checkGameOver():
+            self.gameOverLabel.draw(screen)
 
     # Returns true if the players are in a winning position (same location)
     def checkGameOver(self):
@@ -99,12 +109,14 @@ class GameScreen:
         if self.state == None:
             return
 
-        if self.checkGameOver():
-            print "GAME OVER"
-
         self.aang.rect.x = 48*self.state.aangPosition[0]
         self.aang.rect.y = 48*self.state.aangPosition[1]
         
         self.katara.rect.x = 48*self.state.kataraPosition[0]
         self.katara.rect.y = 48*self.state.kataraPosition[1]
+
+        if self.state.playerTurnNumber == self.gs.playerNumber:
+            self.turnLabel.text = "Your Turn"
+        else:
+            self.turnLabel.text = "Their Turn"
         

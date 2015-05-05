@@ -39,7 +39,7 @@ class MazeView:
         self.mazeViews = None
         self.mazeDesc = None
         self.parent = parent
-        self.setupFromFile("emptyMaze.txt")
+        self.setupFromFile("zachMaze.txt")
 
     # This method draws only the tiles of the maze that are within sight of a given position
     # The position is given in grid coordinates (0-9), not screen coordinates
