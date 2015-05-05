@@ -5,13 +5,10 @@ import pickle
 from MenuState import MenuState
 from twisted.protocols.basic import LineReceiver
 
-# possible screens: MENU_SCREEN, GAME_SCREEN
-# possible requests: GAME_STATE_REQUEST, PLAYER_CHOICE_REQUEST, GAME_STATE_UPDATE_REQUEST, MENU_STATE_UPDATE_REQUEST
-
 # this represents a connection between a client and the server
 # two of these should exist
 class GameConnection(Protocol):
-	playerNumber = 0
+	playerNumber = 0 # for this specific connection
 	def __init__(self, dataDict):
 		self.sharedData = dataDict
 
@@ -29,21 +26,21 @@ class GameConnection(Protocol):
 		self.transport.write(encodedData)
 
 	def respondToRequest(self, request):
-		response = dict()
+		# check the request type and then process
 		if request['REQUEST_TYPE'] == 'MENU_STATE_UPDATE_REQUEST':
-			self.sharedData['currentMenuState'] = request['REQUEST_DATA']
+			self.sharedData['currentMenuState'] = request['REQUEST_DATA'] # update menu state
 			data = {'RESPONSE_TYPE' : 'MENU_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentMenuState']}
-			self.sendDataToBothPlayers(data)
+			self.sendDataToBothPlayers(data) # update both players with the new menu state
 		elif request['REQUEST_TYPE'] == 'GAME_STATE_UPDATE_REQUEST':
-			self.sharedData['currentGameState'] = request['REQUEST_DATA']
+			self.sharedData['currentGameState'] = request['REQUEST_DATA'] # update game state
 			# change turn
 			self.sharedData['currentGameState'].playerTurnNumber = self.sharedData['currentGameState'].playerTurnNumber % 2 + 1
 			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentGameState']}
-			self.sendDataToBothPlayers(data)
-		elif request['REQUEST_TYPE'] == 'MENU_STATE_REQUEST':
+			self.sendDataToBothPlayers(data) # update both players with the new menu state
+		elif request['REQUEST_TYPE'] == 'MENU_STATE_REQUEST': # just asking for state
 			data = {'RESPONSE_TYPE' : 'MENU_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentMenuState']}
-			self.sendData(data)
-		elif request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST':
+			self.sendData(data) 
+		elif request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST': # just asking for state
 			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentGameState']}
 			self.sendData(data)
 		elif request['REQUEST_TYPE'] == 'GAME_STATE_INITIAL_REQUEST':
@@ -63,6 +60,7 @@ class GameConnection(Protocol):
 			self.sharedData['currentGameFactory'].player2Connection.sendData(data)
 
 class GameConnectionFactory(Factory):
+	# keep connections
 	player1Connection = None
 	player2Connection = None
 
@@ -70,7 +68,7 @@ class GameConnectionFactory(Factory):
 		self.sharedData = dataDict
 
 	def buildProtocol(self, addr):
-		# determine who is player1
+		# determine who is player1 by connection order
 		if self.player1Connection is None:
 			self.player1Connection = GameConnection(self.sharedData)
 			self.player1Connection.playerNumber = 1
@@ -85,6 +83,7 @@ class ChatConnection(LineReceiver):
 		self.sharedData = dataDict
 
 	def connectionMade(self):
+		# inform lovers of connection or inform that lover hasn't connected
 		if self.sharedData['currentChatFactory'].firstPlayerConnection is not None and self.sharedData['currentChatFactory'].secondPlayerConnection is not None:
 			self.sharedData['currentChatFactory'].firstPlayerConnection.sendLine("Your lover has connected")
 			self.sharedData['currentChatFactory'].secondPlayerConnection.sendLine("Your lover has connected")
@@ -104,7 +103,7 @@ class ChatConnection(LineReceiver):
 			self.sendLine("Your lover has not yet connected")
 
 class ChatConnectionFactory(Factory):
-	# not necessarily players one and two
+	# not necessarily players one and two, depending on connection time
 	firstPlayerConnection = None
 	secondPlayerConnection = None
 
@@ -112,6 +111,7 @@ class ChatConnectionFactory(Factory):
 		self.sharedData = dataDict
 
 	def buildProtocol(self, addr):
+		# choose first and second player based on connection order
 		if self.firstPlayerConnection is None:
 			self.firstPlayerConnection = ChatConnection(self.sharedData)
 			self.firstPlayerConnection.playerNumber = 1
@@ -125,13 +125,13 @@ class ChatConnectionFactory(Factory):
 		pass
 
 
-
+# this data is shared among all connections and factories
 sharedData = dict()
 #state refers to data pertaining to the game
 #screen refers to the point of the game
 sharedData.update({'currentGameState' : GameState(), 'currentMenuState' : MenuState(), 'currentGameScreen' : 'MENU_SCREEN', "currentChatFactory" : ChatConnectionFactory(sharedData), "currentGameFactory" : GameConnectionFactory(sharedData)})
 
-# connection to work
+# listen for player connections
 reactor.listenTCP(2580, sharedData["currentGameFactory"])
 reactor.listenTCP(2581, sharedData["currentChatFactory"])
 reactor.run()

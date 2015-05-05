@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from MainMenuScreen import MainMenuScreen
 from GameScreen import GameScreen
+import sys
 
 ## This class controls the game window, and tells the current screen to draw
 ## It should be instantiated by player.py, so that Twisted can handle the game loop
@@ -27,7 +28,8 @@ class GameSpace:
 	def tick(self):
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				sys.exit()
+				pygame.quit()
+				self.connection.signalQuit()
 			self.activeScreen.handleEvent(event)
 
 
