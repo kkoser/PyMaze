@@ -43,6 +43,12 @@ class GameConnection(Protocol):
 		elif request['REQUEST_TYPE'] == 'GAME_STATE_REQUEST':
 			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentGameState']}
 			self.sendData(data)
+		elif request['REQUEST_TYPE'] == 'GAME_STATE_INITIAL_REQUEST':
+			# add initial game state data
+			self.sharedData['currentGameState'].aangPlayerNumber = self.sharedData['currentMenuState'].aangPlayerNumber
+			self.sharedData['currentGameState'].kataraPlayerNumber = self.sharedData['currentMenuState'].kataraPlayerNumber
+			data = {'RESPONSE_TYPE' : 'GAME_STATE_RESPONSE', 'PLAYER_NUMBER' : self.playerNumber, 'RESPONSE_DATA' : self.sharedData['currentGameState']}
+			self.sendData(data)
 
 	def sendDataToBothPlayers(self, data):
 		#send it to both players if they're online

@@ -3,6 +3,8 @@ from twisted.internet import reactor
 import pickle
 from twisted.internet.task import LoopingCall
 from game import GameSpace
+from twisted.protocols.basic import LineReceiver
+import pprint
 
 class ServerConnection(Protocol):
 	def __init__(self, dataDict):
@@ -32,20 +34,24 @@ class ServerConnection(Protocol):
 			self.sharedData['gameSpace'].playerNumber = response['PLAYER_NUMBER']
 
 			#check for transition to game screen
-			print vars(response['RESPONSE_DATA'])
 			if response['RESPONSE_DATA'].aangPlayerReady and response['RESPONSE_DATA'].kataraPlayerReady:
-				print "asking for game state"
 				# get game state
-				self.askForGameState()
+				self.askForInitialGameState()
 
 		elif response['RESPONSE_TYPE'] == 'GAME_STATE_RESPONSE':
 			self.sharedData['gameSpace'].activeScreen = self.sharedData['gameSpace'].gameScreen
 			# update game state
+			print "game state:"
+			pprint.pprint(response['RESPONSE_DATA']) 
 			self.sharedData['gameSpace'].activeScreen.state = response['RESPONSE_DATA']
 			self.sharedData['gameSpace'].playerNumber = response['PLAYER_NUMBER']
 
 	def sendMenuState(self, menuState):
 		request = {'REQUEST_TYPE' : 'MENU_STATE_UPDATE_REQUEST', 'REQUEST_DATA' : menuState}
+		self.sendData(request)
+
+	def sendMenuState(self, gameState):
+		request = {'REQUEST_TYPE' : 'GAME_STATE_UPDATE_REQUEST', 'REQUEST_DATA' : gameState}
 		self.sendData(request)
 
 	def askForGameState(self):
@@ -56,6 +62,9 @@ class ServerConnection(Protocol):
 		request = {'REQUEST_TYPE' : 'MENU_STATE_REQUEST'}
 		self.sendData(request)
 
+	def askForInitialGameState(self):
+		request = {'REQUEST_TYPE' : 'GAME_STATE_INITIAL_REQUEST'}
+		self.sendData(request)
 
 class ServerConnectionFactory(ClientFactory):
 	currentConnection = None
@@ -75,6 +84,19 @@ class ServerConnectionFactory(ClientFactory):
 
 	def clientConnectionFailed(self, connector, reason):
 		print 'Connection failed. Reason:', reason
+
+class ChatConnection(LineReceiver):
+	pass
+
+class chatConnectionFactory(Factory):
+	currentConnection = None
+
+	def __init__(self, dataDict):
+		self.sharedData = dataDict
+
+	def buildProtocol(self, addr):
+		self.currentConnection = ChatConnection(self.sharedData)
+
 
 if __name__ == '__main__':
 
