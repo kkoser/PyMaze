@@ -19,10 +19,10 @@ class GameScreen:
         self.katara.rect.move_ip(400,200)
 
         self.font = pygame.font.Font(None,30)
-        self.turnLabel = KLabel("Your", self.font, 20,490)
+        self.turnLabel = KLabel("Your Turn", self.font, 20,490)
 
         self.bigFont = pygame.font.Font(None, 45)
-        self.gameOverLabel = KLabel("Your", self.bigFont, 100,100)
+        self.gameOverLabel = KLabel("Game Over", self.bigFont, 150,300)
 
         self.state = None
 
