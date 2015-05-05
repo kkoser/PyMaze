@@ -1,23 +1,21 @@
-import sys
-import os
-from math import *
 import pygame
 from pygame.locals import *
 from KSprite import KSprite
 from KLabel import KLabel
 
+## This class represents the first screen of the game, where players choose their characters
 class MainMenuScreen:
     def setup(self):
         #Add in the logos and buttons here
         self.aang = KSprite("images/aang.gif")
-        self.aang.rect.move_ip(200,200)
+        self.aang.rect.move_ip(75,200)
         self.katara = KSprite("images/katara.jpg")
-        self.katara.rect.move_ip(400,200)
+        self.katara.rect.move_ip(275,200)
 
         self.font = pygame.font.Font(None,30)
-        self.statusLabel = KLabel("Choose a character", self.font, 300,400)
-        self.aangLabel = KLabel("Aang", self.font, 200,250)
-        self.kataraLabel = KLabel("Katara", self.font, 400,250)
+        self.statusLabel = KLabel("Choose a character", self.font, 100,400)
+        self.aangLabel = KLabel("Aang", self.font, 50,250)
+        self.kataraLabel = KLabel("Katara", self.font, 250,250)
 
         self.state = None
 
@@ -25,6 +23,7 @@ class MainMenuScreen:
         self.gs = gs
         self.setup()
 
+    # This method draws the screens views to the given screen
     def draw(self, screen):
         screen.fill(self.gs.black)
         self.aang.draw(screen)
@@ -33,23 +32,21 @@ class MainMenuScreen:
         self.aangLabel.draw(screen)
         self.kataraLabel.draw(screen)
 
+    # This method handles mouse events, which allow players to select their avatar
     def handleEvent(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
             if self.aang.rect.collidepoint(mx,my):
                 #select aang
-                print "Selected aang"
                 if self.state.aangPlayerNumber == 0 and self.state.kataraPlayerNumber != self.gs.playerNumber:
                     self.state.aangPlayerNumber = self.gs.playerNumber
                     self.gs.connection.sendMenuState(self.state)
             if self.katara.rect.collidepoint(mx,my):
                 #select katara
-                print "Selected katara"
                 if self.state.kataraPlayerNumber == 0 and self.state.aangPlayerNumber != self.gs.playerNumber:
                     self.state.kataraPlayerNumber = self.gs.playerNumber
                     self.gs.connection.sendMenuState(self.state)
             if self.statusLabel.rect.collidepoint(mx,my) and self.statusLabel.text == "Enter the Cave":
-                print "clicked label"
                 if self.state.aangPlayerNumber == self.gs.playerNumber:
                     self.state.aangPlayerReady = True
                 else:
@@ -57,11 +54,10 @@ class MainMenuScreen:
 
                 self.gs.connection.sendMenuState(self.state)
 
+    # This method updates the sprite locations and labels according to the current menu state
     def tick(self):
         if self.state == None:
             return
-
-        print "Tick"
 
         # The state object will be updated by the twisted client as appropriate
         pid = self.gs.playerNumber
