@@ -3,6 +3,7 @@ from twisted.internet import reactor
 from GameState import GameState
 import pickle
 from MenuState import MenuState
+from twisted.protocols.basic import LineReceiver
 
 # possible screens: MENU_SCREEN, GAME_SCREEN
 # possible requests: GAME_STATE_REQUEST, PLAYER_CHOICE_REQUEST, GAME_STATE_UPDATE_REQUEST, MENU_STATE_UPDATE_REQUEST
@@ -18,10 +19,12 @@ class GameConnection(Protocol):
 		pass
 
 	def dataReceived(self, data):
+		# decode and pass on 
 		decodedData = pickle.loads(data)
 		self.respondToRequest(decodedData)
 
 	def sendData(self, data):
+		# encode and pass on
 		encodedData = pickle.dumps(data)
 		self.transport.write(encodedData)
 
@@ -77,43 +80,49 @@ class GameConnectionFactory(Factory):
 			self.player2Connection.playerNumber = 2
 			return self.player2Connection
 
-class ChatConnection(Protocol):
-
+class ChatConnection(LineReceiver):
 	def __init__(self, dataDict):
 		self.sharedData = dataDict
 
 	def connectionMade(self):
-		# listen for data connection
-		reactor.listenTCP(2581, sharedData["currentDataFactory"])
-		# ask for data connection
-		self.sharedData['currentGameFactory'].currentConnection.sendData("REQUESTING_DATA_CONNECTION")
-		# see if there is data that needs sending
-		while (len(self.sharedData['toSSHQueue'].waiting) > 0):
-			d = self.sharedData['toSSHQueue'].get()
-			d.addCallback(self.sendData)
-
-	def connectionLost(self, reason):
-		print("connection lost", reason)
-
-	def dataReceived(self, data):
-		# pass on the data
-		if self.sharedData['currentDataFactory'].currentConnection is not None:
-			self.sharedData['currentDataFactory'].currentConnection.sendData(data)
+		if self.sharedData['currentChatFactory'].firstPlayerConnection is not None and self.sharedData['currentChatFactory'].secondPlayerConnection is not None:
+			self.sharedData['currentChatFactory'].firstPlayerConnection.sendLine("Your lover has connected")
+			self.sharedData['currentChatFactory'].secondPlayerConnection.sendLine("Your lover has connected")
 		else:
-			self.sharedData['toDataQueue'].put(data)
+			self.sendLine("Your lover has not yet connected")
 
-	def sendData(self, data):
-		self.transport.write(data)
+	def lineReceived(self, line):
+		#first check if the other player has connected
+		if self.sharedData['currentChatFactory'].firstPlayerConnection is not None and self.sharedData['currentChatFactory'].secondPlayerConnection is not None:
+			#pass it on
+			if self.sharedData['currentChatFactory'].firstPlayerConnection == self:
+				#send to the other player
+				self.sharedData['currentChatFactory'].secondPlayerConnection.sendLine(line)
+			else:
+				self.sharedData['currentChatFactory'].firstPlayerConnection.sendLine(line)
+		else:			
+			self.sendLine("Your lover has not yet connected")
 
 class ChatConnectionFactory(Factory):
-	currentConnection = None
+	# not necessarily players one and two
+	firstPlayerConnection = None
+	secondPlayerConnection = None
 
 	def __init__(self, dataDict):
 		self.sharedData = dataDict
 
 	def buildProtocol(self, addr):
-		self.currentConnection = SSHConnection(self.sharedData)
-		return self.currentConnection
+		if self.firstPlayerConnection is None:
+			self.firstPlayerConnection = ChatConnection(self.sharedData)
+			self.firstPlayerConnection.playerNumber = 1
+			return self.firstPlayerConnection
+		else:
+			self.secondPlayerConnection = ChatConnection(self.sharedData)
+			self.secondPlayerConnection.playerNumber = 2
+			return self.secondPlayerConnection
+
+	def startedConnecting(self, connector):
+		pass
 
 
 
@@ -124,4 +133,5 @@ sharedData.update({'currentGameState' : GameState(), 'currentMenuState' : MenuSt
 
 # connection to work
 reactor.listenTCP(2580, sharedData["currentGameFactory"])
+reactor.listenTCP(2581, sharedData["currentChatFactory"])
 reactor.run()
