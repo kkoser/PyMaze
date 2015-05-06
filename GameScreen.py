@@ -22,7 +22,7 @@ class GameScreen:
         self.turnLabel = KLabel("Your Turn", self.font, 20,490)
 
         self.bigFont = pygame.font.Font(None, 45)
-        self.gameOverLabel = KLabel("Game Over", self.bigFont, 150,300)
+        self.gameOverLabel = KLabel("You win!", self.bigFont, 150,300)
 
         self.state = None
 
