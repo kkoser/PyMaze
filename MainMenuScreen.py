@@ -9,7 +9,7 @@ class MainMenuScreen:
         #Add in the logos and buttons here
         self.aang = KSprite("images/aang.gif")
         self.aang.rect.move_ip(75,200)
-        self.katara = KSprite("images/katara.jpg")
+        self.katara = KSprite("images/katara.png")
         self.katara.rect.move_ip(275,200)
 
         self.font = pygame.font.Font(None,30)
