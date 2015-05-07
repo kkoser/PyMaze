@@ -15,7 +15,7 @@ class GameScreen:
         self.mazeView = MazeView(self)
         self.aang = KSprite("images/aang.gif")
         self.aang.rect.move_ip(200,200)
-        self.katara = KSprite("images/katara.jpg")
+        self.katara = KSprite("images/katara.png")
         self.katara.rect.move_ip(400,200)
 
         self.font = pygame.font.Font(None,30)
