@@ -12,6 +12,10 @@ class MainMenuScreen:
         self.katara = KSprite("images/katara.jpg")
         self.katara.rect.move_ip(275,200)
 
+        self.logo = KSprite("images/logo.png")
+        self.logo.rect.move_ip(10,10)
+
+
         self.font = pygame.font.Font(None,30)
         self.statusLabel = KLabel("Choose a character", self.font, 100,400)
         self.aangLabel = KLabel("Aang", self.font, 50,250)
@@ -31,6 +35,7 @@ class MainMenuScreen:
         self.statusLabel.draw(screen)
         self.aangLabel.draw(screen)
         self.kataraLabel.draw(screen)
+        self.logo.draw(screen)
 
     # This method handles mouse events, which allow players to select their avatar
     def handleEvent(self, event):
