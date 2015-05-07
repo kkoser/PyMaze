@@ -8,18 +8,18 @@ class MainMenuScreen:
     def setup(self):
         #Add in the logos and buttons here
         self.aang = KSprite("images/aang.gif")
-        self.aang.rect.move_ip(75,200)
+        self.aang.rect.move_ip(105,200)
         self.katara = KSprite("images/katara.png")
-        self.katara.rect.move_ip(275,200)
+        self.katara.rect.move_ip(315,200)
 
         self.logo = KSprite("images/logo.png")
-        self.logo.rect.move_ip(10,10)
+        self.logo.rect.move_ip(40,10)
 
 
         self.font = pygame.font.Font(None,30)
-        self.statusLabel = KLabel("Choose a character", self.font, 100,400)
-        self.aangLabel = KLabel("Aang", self.font, 50,250)
-        self.kataraLabel = KLabel("Katara", self.font, 250,250)
+        self.statusLabel = KLabel("Choose a character", self.font, 130,400)
+        self.aangLabel = KLabel("Aang", self.font, 100,250)
+        self.kataraLabel = KLabel("Katara", self.font, 300,250)
 
         self.state = None
 
