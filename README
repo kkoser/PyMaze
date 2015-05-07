@@ -1,3 +1,17 @@
+PyMaze: An Avatar-inspired collaborative game
 Kyle Koser and Zach Waterson
+Programming Paradigms Final Project
 
-PyMaze is a cooperative maze solving game
+Background:
+This game is inspired by the Avatar: The Last Airbender episode “The Cave of Two Lovers”. The idea is that you and your lover are stuck in an underground maze and must find each other to escape. 
+
+***However, you cannot see around you, you can only see what surrounds your partner!*** 
+
+Therefore, you must communicate with your partner so that you can find each other in this dark cave.
+
+Running the game:
+The python script server.py must be running on the machine. Each player then runs player.py (on the same machine as the server).
+
+Gameplay:
+Once both players are connected, they must each choose their character. Once both have chosen, they may enter the cave and begin play. Note that once both players have connected, the players can communicate using a chat client built into the player.py program. Text typed in the terminal while the game is running will be sent to your partner, and you will also receive text from them. This can be used to communicate information, indicate what moves may be best, and debate strategies. Once the game has started, the maze will be shown with spaces revealed around your partner, but not around you. If it is your turn, you may move your character one tile using the arrow keys. Once a move has been made and is valid, it will become the other person’s turn. The game ends when the two players occupy the same space on the maze.
+

@@ -41,12 +41,12 @@ class MainMenuScreen:
     def handleEvent(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
-            if self.aang.rect.collidepoint(mx,my):
+            if self.aang.rect.collidepoint(mx,my) or self.aangLabel.rect.collidepoint(mx,my):
                 #select aang
                 if self.state.aangPlayerNumber == 0 and self.state.kataraPlayerNumber != self.gs.playerNumber:
                     self.state.aangPlayerNumber = self.gs.playerNumber
                     self.gs.connection.sendMenuState(self.state)
-            if self.katara.rect.collidepoint(mx,my):
+            if self.katara.rect.collidepoint(mx,my) or self.kataraLabel.rect.collidepoint(mx,my):
                 #select katara
                 if self.state.kataraPlayerNumber == 0 and self.state.aangPlayerNumber != self.gs.playerNumber:
                     self.state.kataraPlayerNumber = self.gs.playerNumber
